@@ -1,0 +1,58 @@
+@use "../../styles/vars";
+.form {
+  display: flex;
+  flex-direction: column;
+  row-gap: 1rem;
+  font-size: large;
+}
+.form__subtitle {
+  font-weight: 500;
+}
+.form__title {
+  font-weight: 500;
+}
+.form__field {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas:
+    "label input"
+    "message message";
+  column-gap: 1rem;
+  & {
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "label"
+        "input"
+        "message";
+      row-gap: 1vh;
+    }
+  }
+}
+.form__label {
+  grid-area: label;
+}
+.form__input {
+  font-size: large;
+  padding: 0.2rem;
+  grid-area: input;
+}
+.form__input_invalid {
+  border: 2px solid red;
+}
+.form__message {
+  padding: 0.2rem;
+  margin-top: 0.5rem;
+  border-radius: 5px;
+  grid-area: message;
+  display: inline-block;
+}
+.form__message_invalid {
+  background-color: vars.$color-light-red;
+}
+.form__buttons {
+  display: flex;
+  flex-direction: row;
+  column-gap: 2vw;
+  justify-content: space-around;
+}

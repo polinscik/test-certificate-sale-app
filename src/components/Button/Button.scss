@@ -1,0 +1,56 @@
+@use "../../styles/vars";
+.btn {
+  font-family: inherit;
+  border-style: none;
+  border: 2px #000 solid;
+  border-radius: 5px;
+  font-size: large;
+  background-color: vars.$color-light-gray;
+  padding: 0.5rem 2rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn_buy {
+  &:disabled {
+    background-color: vars.$color-gray;
+    border-color: #6b6b6b;
+  }
+  &:hover:not([disabled]) {
+    border-color: vars.$color-green;
+    background-color: #fff;
+  }
+  &:active:not([disabled]) {
+    background-color: vars.$color-green;
+    color: #fff;
+  }
+}
+.btn_back {
+  &:disabled {
+    background-color: vars.$color-gray;
+    border-color: #6b6b6b;
+  }
+  &:hover:not([disabled]) {
+    border-color: vars.$color-cyan;
+    background-color: #fff;
+  }
+  &:active:not([disabled]) {
+    background-color: vars.$color-cyan;
+    color: #fff;
+  }
+}
+.btn_pay {
+  &:disabled {
+    background-color: vars.$color-gray;
+    border-color: #6b6b6b;
+  }
+  &:hover:not([disabled]) {
+    border-color: vars.$color-pink;
+    background-color: #fff;
+  }
+  &:active:not([disabled]) {
+    background-color: vars.$color-pink;
+    color: #fff;
+  }
+}
