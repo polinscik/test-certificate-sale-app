@@ -1,6 +1,7 @@
 {
   "name": "test-certificate-sale-app",
   "version": "1.0.0",
+  "homepage": "https://polinscik.github.io/test-certificate-sale-app/",
   "description": "Test work using React",
   "main": "index.js",
   "scripts": {
