@@ -5,7 +5,7 @@ function PaymentPage() {
   let redirectCheck = useLocation();
   const navigate = useNavigate();
   useEffect(() => {
-    if (!redirectCheck.state) {
+    if (!redirectCheck.state || !redirectCheck.state.payload) {
       navigate("/");
     }
   }, []);

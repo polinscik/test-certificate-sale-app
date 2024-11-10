@@ -15,6 +15,11 @@ const EMAIL_PATTERN = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 function Form() {
   const navigate = useNavigate();
   let productInfo = useLocation();
+  useEffect(() => {
+    if (!productInfo.state || !productInfo.state.payload) {
+      navigate("/");
+    }
+  }, []);
   const [form, setForm] = useState({
     name: "",
     phone: "+7 (___) ___-__-__",
@@ -27,12 +32,6 @@ function Form() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const formInvalid = invalid.name || invalid.phone || invalid.email;
-
-  useEffect(() => {
-    if (!productInfo.state) {
-      navigate("/");
-    }
-  }, []);
 
   function navigateBack(e) {
     e.preventDefault();
