@@ -5,6 +5,7 @@ import Button from "../Button/Button.jsx";
 import {useMask} from "@react-input/mask";
 import {formatPhone} from "./formUtils.js";
 import Loader from "../Loader/Loader.jsx";
+import {InputMask} from "@react-input/mask";
 const APIKey = "011ba11bdcad4fa396660c2ec447ef14";
 const POSTMethodName = "OSSale";
 const BASEURL = "https://sycret.ru/service/api/api";
@@ -102,11 +103,34 @@ function Form() {
         .finally(() => setIsLoading(false));
     }
   }
-  const phoneInputRef = useMask({
+  const options = {
     mask: "+7 (___) ___-__-__",
     replacement: {_: /\d/},
     showMask: true,
-  });
+  };
+  const phoneInputRef = useMask(options);
+
+  //there's certainly a better way to move the cursor to the end of user's input (with the mask on the input).
+  function handlePhoneInputCursor(e) {
+    const input = e.target;
+    const formattedValue = formatPhone(input.value);
+    const valueLength = formattedValue.length;
+    let moveToIndex;
+    if (!formattedValue) {
+      moveToIndex = 4;
+    } else if (valueLength < 3) {
+      moveToIndex = 4 + valueLength;
+    } else if (valueLength < 6) {
+      moveToIndex = 6 + valueLength;
+    } else if (valueLength < 8) {
+      moveToIndex = 7 + valueLength;
+    } else if (valueLength < 10) {
+      moveToIndex = 8 + valueLength;
+    } else return;
+    setTimeout(() => {
+      input.setSelectionRange(moveToIndex, moveToIndex);
+    }, 400);
+  }
 
   function validateField(value, pattern, propName) {
     const isValid = pattern.test(value);
@@ -152,6 +176,8 @@ function Form() {
           value={form.phone}
           onChange={(e) => handleChange(e)}
           className={phoneClassName}
+          onClick={(e) => handlePhoneInputCursor(e)}
+          onFocus={(e) => handlePhoneInputCursor(e)}
         />
         {invalid.phone && (
           <p className="form__message form__message_invalid">
