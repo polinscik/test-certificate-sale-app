@@ -12,6 +12,7 @@ function CertificateCards() {
   const [data, setData] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [radio, setRadio] = useState({id: "", productType: "", primaryKey: ""});
+  const [ApiError, setApiError] = useState({isError: false, info: ""});
 
   function handleRadioChange(id, productType, primaryKey, name, price, summa) {
     setRadio({id, productType, primaryKey, name, price, summa});
@@ -24,14 +25,28 @@ function CertificateCards() {
     })
       .then((response) => {
         if (!response.ok) {
-          throw new Error("Network response was not ok");
+          setApiError((prev) => ({
+            ...prev,
+            isError: true,
+            info: "При запросе на сервер произошла ошибка",
+          }));
         }
         return response.json();
       })
       .then((response) => {
         setData(response.data);
+        setApiError((prev) => ({
+          ...prev,
+          isError: false,
+          info: "",
+        }));
       })
       .catch((error) => {
+        setApiError((prev) => ({
+          ...prev,
+          isError: true,
+          info: "При запросе на сервер произошла ошибка",
+        }));
         console.error("Error:", error);
       })
       .finally(() => setIsLoading(false));
@@ -43,6 +58,13 @@ function CertificateCards() {
   return (
     <section className="certificates">
       <h1 className="certificates__title">Выберите подарочный сертификат</h1>
+      <div
+        aria-live="polite"
+        style={{display: "flex", flexDirection: "column"}}>
+        {ApiError.isError && (
+          <p className="certificate__error-msg">{ApiError.info}</p>
+        )}
+      </div>
       <div className="certificates__container">
         {data &&
           data.map((card) => (

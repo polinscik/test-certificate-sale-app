@@ -44,7 +44,6 @@
   padding: 0.2rem;
   margin-top: 0.5rem;
   border-radius: 5px;
-  grid-area: message;
   display: inline-block;
 }
 .form__message_invalid {
@@ -55,4 +54,16 @@
   flex-direction: row;
   column-gap: 2vw;
   justify-content: space-around;
+}
+.form__error-msg,
+.error-msg {
+  font-size: 1.2rem;
+  background-color: #fff;
+  padding: 0.5rem 1rem;
+  border: 2px solid red;
+}
+.form__message-container {
+  grid-area: message;
+  display: flex;
+  flex-direction: column;
 }

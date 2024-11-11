@@ -33,7 +33,6 @@ $radio-size: 1.5rem;
   right: calc($card-padding + $radio-border-width);
   bottom: calc($card-padding + $radio-border-width);
   height: $radio-size;
-  outline: none;
   transition: all 0.2s ease-out;
   width: $radio-size;
   &::after {

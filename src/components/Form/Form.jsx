@@ -5,12 +5,21 @@ import Button from "../Button/Button.jsx";
 import {useMask} from "@react-input/mask";
 import {formatPhone} from "./formUtils.js";
 import Loader from "../Loader/Loader.jsx";
-import {InputMask} from "@react-input/mask";
 const APIKey = "011ba11bdcad4fa396660c2ec447ef14";
 const POSTMethodName = "OSSale";
 const BASEURL = "https://sycret.ru/service/api/api";
 const PHONE_PATTERN = /\+7\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}/;
 const EMAIL_PATTERN = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+const errorMsgMissingInput = {
+  name: "Введите ФИО",
+  phone: "Введите номер телефона",
+  email: "Введите адрес электронной почты",
+};
+const errorMsgInvalidInput = {
+  name: "Введите ФИО",
+  phone: "Введите корректный номер телефона",
+  email: "Введите корректный адрес электронной почты",
+};
 
 function Form() {
   const navigate = useNavigate();
@@ -30,7 +39,13 @@ function Form() {
     phone: false,
     email: false,
   });
+  const [errorMsg, setErrorMsg] = useState({
+    name: errorMsgMissingInput.name,
+    phone: errorMsgMissingInput.phone,
+    email: errorMsgMissingInput.email,
+  });
   const [isLoading, setIsLoading] = useState(false);
+  const [ApiError, setApiError] = useState({isError: false, info: ""});
   const formInvalid = invalid.name || invalid.phone || invalid.email;
 
   function navigateBack(e) {
@@ -39,11 +54,17 @@ function Form() {
   }
 
   function handleChange(e) {
-    setForm({...form, [e.target.name]: e.target.value});
-    if (e.target.value.trim()) {
-      setInvalid({...invalid, [e.target.name]: false});
-    } else if (!e.target.value.trim()) {
-      setInvalid({...invalid, [e.target.name]: true});
+    const targetName = e.target.name;
+    const targetValue = e.target.value;
+    setForm({...form, [targetName]: targetValue});
+    if (targetValue.trim()) {
+      setInvalid({...invalid, [targetName]: false});
+    } else if (!targetValue.trim()) {
+      setInvalid({...invalid, [targetName]: true});
+      setErrorMsg({
+        ...errorMsg,
+        [targetName]: errorMsgMissingInput[targetName],
+      });
     }
   }
 
@@ -88,15 +109,29 @@ function Form() {
       })
         .then((response) => {
           if (!response.ok) {
-            throw new Error("Network response was not ok");
+            setApiError((prev) => ({
+              ...prev,
+              isError: true,
+              info: "При отправке данных на сервер произошла ошибка",
+            }));
           }
           return response.json();
         })
         .then((response) => {
           console.log(response.data);
+          setApiError((prev) => ({
+            ...prev,
+            isError: false,
+            info: "",
+          }));
           navigate("/payment-redirect", {state: {payload: "success"}});
         })
         .catch((error) => {
+          setApiError((prev) => ({
+            ...prev,
+            isError: true,
+            info: "При запросе на сервер произошла ошибка",
+          }));
           console.error("Error:", error);
         })
         .finally(() => setIsLoading(false));
@@ -135,7 +170,13 @@ function Form() {
     const isValid = pattern.test(value);
     if (isValid) {
       setInvalid((prev) => ({...prev, [propName]: false}));
+    } else {
+      setErrorMsg((prev) => ({
+        ...prev,
+        [propName]: errorMsgInvalidInput[propName],
+      }));
     }
+
     return isValid;
   }
   if (isLoading) {
@@ -158,10 +199,18 @@ function Form() {
           value={form.name}
           onChange={(e) => handleChange(e)}
           className={nameClassName}
+          required
+          autoFocus
         />
-        {invalid.name && (
-          <p className="form__message form__message_invalid">Введите ФИО</p>
-        )}
+        <div aria-live="polite" className="form__message-container">
+          {invalid.name && (
+            <p
+              className="form__message form__message_invalid"
+              aria-label={errorMsg.name}>
+              {errorMsg.name}
+            </p>
+          )}
+        </div>
       </div>
       <div className="form__field">
         <label htmlFor="phone" className="form__label">
@@ -177,12 +226,17 @@ function Form() {
           className={phoneClassName}
           onClick={(e) => handlePhoneInputCursor(e)}
           onFocus={(e) => handlePhoneInputCursor(e)}
-        />
-        {invalid.phone && (
-          <p className="form__message form__message_invalid">
-            Введите номер телефона
-          </p>
-        )}
+          required
+        />{" "}
+        <div aria-live="polite" className="form__message-container">
+          {invalid.phone && (
+            <p
+              className="form__message form__message_invalid"
+              aria-label={errorMsg.phone}>
+              {errorMsg.phone}
+            </p>
+          )}
+        </div>
       </div>
       <div className="form__field">
         <label htmlFor="email" className="form__label">
@@ -196,15 +250,30 @@ function Form() {
           value={form.email}
           onChange={(e) => handleChange(e)}
           className={emailClassName}
+          required
         />
-        {invalid.email && (
-          <p className="form__message form__message_invalid">
-            Введите адрес электронной почты
-          </p>
+        <div aria-live="polite" className="form__message-container">
+          {invalid.email && (
+            <p
+              className="form__message form__message_invalid"
+              aria-label={errorMsg.email}>
+              {errorMsg.email}
+            </p>
+          )}
+        </div>
+      </div>
+      <div
+        aria-live="polite"
+        style={{display: "flex", flexDirection: "column"}}>
+        {ApiError.isError && (
+          <p className="form__error-msg error-msg">{ApiError.info}</p>
         )}
       </div>
       <div className="form__buttons">
-        <Button onClick={(e) => navigateBack(e)} classname="btn_back">
+        <Button
+          onClick={(e) => navigateBack(e)}
+          classname="btn_back"
+          type="button">
           Назад
         </Button>
 

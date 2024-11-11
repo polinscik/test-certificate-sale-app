@@ -16,6 +16,7 @@ function CertificateCard({
   const computedClassname = checked ? "product product_checked" : "product";
   return (
     <div
+      tabIndex={0}
       className={computedClassname}
       onClick={() =>
         handleChange(id, productType, primaryKey, name, price, summa)

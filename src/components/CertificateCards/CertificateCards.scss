@@ -20,3 +20,10 @@
   column-gap: 1.5rem;
   justify-items: center;
 }
+.certificate__error-msg,
+.error-msg {
+  font-size: 1.2rem;
+  background-color: #fff;
+  padding: 0.5rem 1rem;
+  border: 2px solid red;
+}
